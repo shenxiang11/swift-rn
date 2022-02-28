@@ -1,0 +1,52 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '15.0'
+
+#flutter_application_path = '../my_flutter'
+#load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
+
+require_relative '../rntest/node_modules/@react-native-community/cli-platform-ios/native_modules'
+require_relative '../rntest/node_modules/react-native/scripts/react_native_pods'
+
+target 'demo' do
+  # Comment the next line if you don't want to use dynamic frameworks
+#  use_frameworks!
+
+  # Pods for demo
+#  install_all_flutter_pods(flutter_application_path)
+
+   # react-native 需要的相关配置
+   config = use_native_modules!
+
+   use_react_native!(
+     :path => config[:reactNativePath],
+     # to enable hermes on iOS, change `false` to `true` and then install pods
+     :hermes_enabled => true
+   )
+ 
+   # Enables Flipper.
+   #
+   # Note that if you have use_frameworks! enabled, Flipper will not work and
+   # you should disable the next line.
+#    use_flipper!()
+ 
+   post_install do |installer|
+     react_native_post_install(installer)
+   end
+ 
+   # 如果使用use_frameworks!需要添加这一部分，如果不使用则不需要（非常重要）
+   pre_install do |installer|
+     Pod::Installer::Xcode::TargetValidator.send(:define_method,
+      :verify_no_static_framework_transitive_dependencies) {}
+   end
+   
+  
+  target 'demoTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+  target 'demoUITests' do
+    # Pods for testing
+  end
+
+end
